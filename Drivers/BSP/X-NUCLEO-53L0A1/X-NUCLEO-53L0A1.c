@@ -468,6 +468,17 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
             CurIOVal.bytes[1]|=0x80; /* bit 15 expender 0 => byte #1*/
         status= _ExpanderWR(I2cExpAddr0, GPSR+1, &CurIOVal.bytes[1], 1);
         break;
+    case 'u' :
+    case XNUCLEO53L0A1_DEV_USER :
+    	/* reset Dist_01_Pin */
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+        if( state )
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
+        break;
     default:
         XNUCLEO53L0A1_ErrLog("Invalid DevNo %d",DevNo);
         status = -1;

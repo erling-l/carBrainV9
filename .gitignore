@@ -1,3 +1,4 @@
 Debug/*
 *.elf.launch
 Middlewares/*
+/Debug/

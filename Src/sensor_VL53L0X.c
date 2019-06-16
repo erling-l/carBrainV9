@@ -284,12 +284,14 @@ int DetectSensors(int SetDisplay) {
     char PresentMsg[5]="    ";
     /* Reset all */
     nDevPresent = 0;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 4; i++) {
         status = XNUCLEO53L0A1_ResetId(i, 0);
-        debug_printf("#%d Read id fail\n %b", i,status);
+        debug_printf("#%d Read id fail %d\n ", i,status);
+    	int tmp = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14);
+        debug_printf("#%d Read this is a failed id fail %d  %d\n", i,status, tmp);
     }
     /* detect all sensors (even on-board)*/
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 4; i++) {
         VL53L0X_Dev_t *pDev;
         pDev = &VL53L0XDevs[i];
         pDev->I2cDevAddr = 0x52;
@@ -306,7 +308,8 @@ int DetectSensors(int SetDisplay) {
         	/* Try to read one register using default 0x52 address */
             status = VL53L0X_RdWord(pDev, VL53L0X_REG_IDENTIFICATION_MODEL_ID, &Id);
             if (status) {
-                debug_printf("#%d Read id fail\n", i);
+            	int tmp = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14);
+                debug_printf("#%d Read this is a failed id fail %d  %d\n", i,status, tmp);
                 break;
             }
             if (Id == 0xEEAA) {
@@ -349,7 +352,7 @@ int DetectSensors(int SetDisplay) {
     }
     /* Display detected sensor(s) */
     if( SetDisplay ){
-        for(i=0; i<3; i++){
+        for(i=0; i<4; i++){
             if( VL53L0XDevs[i].Present ){
                 PresentMsg[i+1]=VL53L0XDevs[i].DevLetter;
             }
@@ -378,7 +381,7 @@ void SetupSingleShot(RangingConfig_e rangingConfig){
 	uint8_t preRangeVcselPeriod = 14;
 	uint8_t finalRangeVcselPeriod = 10;
 
-    for( i=0; i<3; i++){
+    for( i=0; i<4; i++){
         if( VL53L0XDevs[i].Present){
             status=VL53L0X_StaticInit(&VL53L0XDevs[i]);
             if( status ){
@@ -526,7 +529,7 @@ int RangeDemo(int UseSensorsMask, RangingConfig_e rangingConfig){
     SetupSingleShot(rangingConfig);
 
     /* Which sensor to use ? */
-    for(i=0, nSensorToUse=0; i<3; i++){
+    for(i=0, nSensorToUse=0; i<4; i++){
         if(( UseSensorsMask& (1<<i) ) && VL53L0XDevs[i].Present ){
             nSensorToUse++;
             if( nSensorToUse==1 )
@@ -542,7 +545,9 @@ int RangeDemo(int UseSensorsMask, RangingConfig_e rangingConfig){
         if( nSensorToUse >1 ){
         	/* Multiple devices */
             strcpy(StrDisplay, "    ");
-            for( i=0; i<3; i++){
+            for( i=0; i<4; i++){
+                trace_printf("A%d,%d,%d\n", VL53L0XDevs[i].Id, VL53L0XDevs[i].Present, UseSensorsMask );
+
                 if( ! VL53L0XDevs[i].Present  || (UseSensorsMask & (1<<i))==0 )
                     continue;
                 /* Call All-In-One blocking API function */
@@ -551,7 +556,7 @@ int RangeDemo(int UseSensorsMask, RangingConfig_e rangingConfig){
                     HandleError(ERR_DEMO_RANGE_MULTI);
                 }
                 /* Push data logging to UART */
-                trace_printf("%d,%u,%d,%d,%d\n", VL53L0XDevs[i].Id, TimeStamp_Get(), RangingMeasurementData.RangeStatus, RangingMeasurementData.RangeMilliMeter, RangingMeasurementData.SignalRateRtnMegaCps);
+                trace_printf("A%d,%u,%d,%d,%d\n", VL53L0XDevs[i].Id, TimeStamp_Get(), RangingMeasurementData.RangeStatus, RangingMeasurementData.RangeMilliMeter, RangingMeasurementData.SignalRateRtnMegaCps);
                 /* Store new ranging distance */
                 Sensor_SetNewRange(&VL53L0XDevs[i],&RangingMeasurementData);
                 /* Translate distance in bar graph (multiple device) */

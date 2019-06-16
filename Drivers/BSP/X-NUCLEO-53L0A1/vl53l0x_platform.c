@@ -42,7 +42,8 @@ int _I2CWrite(VL53L0X_DEV Dev, uint8_t *pdata, uint32_t count) {
 
     status = HAL_I2C_Master_Transmit(Dev->I2cHandle, Dev->I2cDevAddr, pdata, count, i2c_time_out);
     if (status) {
-        //VL6180x_ErrLog("I2C error 0x%x %d len", dev->I2cAddr, len);
+    	uart_printf("I2C error 0x%x  len", Dev->I2cDevAddr);
+        //VL6180x_ErrLog("I2C error 0x%x %d len", Dev->I2cDevAddr, len);
         //XNUCLEO6180XA1_I2C1_Init(&hi2c1);
     }
     return status;
