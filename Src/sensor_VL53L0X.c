@@ -28,16 +28,16 @@
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
-  * 4 sensorer 45 grader till höger och vänster om mittlinjen framåt och bakåt 90 grader
-  * justerbara uppåt neråt
+  * 4 sensorer 45 grader till hï¿½ger och vï¿½nster om mittlinjen framï¿½t och bakï¿½t 90 grader
+  * justerbara uppï¿½t nerï¿½t
   * 2 sensorer rakt fram
-  * 1  sensor bakåt
-  * 1 sensor framåt uppåt
-  * kopplingspanel där alla sensorer kopplas
+  * 1  sensor bakï¿½t
+  * 1 sensor framï¿½t uppï¿½t
+  * kopplingspanel dï¿½r alla sensorer kopplas
   * 2*3 pin kontakt (bandkabel kontakter)
   * PID algoritm /10 millisek
   * Fart 1 - 2 m/sek
-  * dela filmer på privat youtube kanal
+  * dela filmer pï¿½ privat youtube kanal
   *
   ******************************************************************************
   */
@@ -89,7 +89,7 @@
 #define ERR_DEMO_RANGE_MULTI   2
 
 
-/** }@} */ /* defgroup ErrCode */
+/** }@} */ /* defgroup ErrCodeF */
 
 
 /**
@@ -106,7 +106,7 @@ I2C_HandleTypeDef  XNUCLEO53L0A1_hi2c;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+const int MAX_SENSORS = 4;
 const char TxtRangeValue[]  = "rng";
 const char TxtBarGraph[]    = "bar";
 #if HAVE_ALARM_DEMO
@@ -150,6 +150,10 @@ VL53L0X_Dev_t VL53L0XDevs[]={
         {.Id=XNUCLEO53L0A1_DEV_CENTER, .DevLetter='c', .I2cHandle=&XNUCLEO53L0A1_hi2c, .I2cDevAddr=0x52},
         {.Id=XNUCLEO53L0A1_DEV_RIGHT, .DevLetter='r', .I2cHandle=&XNUCLEO53L0A1_hi2c, .I2cDevAddr=0x52},
         {.Id=XNUCLEO53L0A1_DEV_USER, .DevLetter='u', .I2cHandle=&XNUCLEO53L0A1_hi2c, .I2cDevAddr=0x52},
+        {.Id=XNUCLEO53L0A1_DEV_USER1, .DevLetter='s', .I2cHandle=&XNUCLEO53L0A1_hi2c, .I2cDevAddr=0x52},
+        {.Id=XNUCLEO53L0A1_DEV_USER2, .DevLetter='t', .I2cHandle=&XNUCLEO53L0A1_hi2c, .I2cDevAddr=0x52},
+        {.Id=XNUCLEO53L0A1_DEV_USER3, .DevLetter='v', .I2cHandle=&XNUCLEO53L0A1_hi2c, .I2cDevAddr=0x52},
+        {.Id=XNUCLEO53L0A1_DEV_USER4, .DevLetter='p', .I2cHandle=&XNUCLEO53L0A1_hi2c, .I2cDevAddr=0x52},
 };
 
 /** range low (and high) in @a RangeToLetter()
@@ -284,14 +288,14 @@ int DetectSensors(int SetDisplay) {
     char PresentMsg[5]="    ";
     /* Reset all */
     nDevPresent = 0;
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < MAX_SENSORS; i++) {
         status = XNUCLEO53L0A1_ResetId(i, 0);
         debug_printf("#%d Read id fail %d\n ", i,status);
     	int tmp = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14);
         debug_printf("#%d Read this is a failed id fail %d  %d\n", i,status, tmp);
     }
     /* detect all sensors (even on-board)*/
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < MAX_SENSORS; i++) {
         VL53L0X_Dev_t *pDev;
         pDev = &VL53L0XDevs[i];
         pDev->I2cDevAddr = 0x52;
@@ -352,7 +356,7 @@ int DetectSensors(int SetDisplay) {
     }
     /* Display detected sensor(s) */
     if( SetDisplay ){
-        for(i=0; i<4; i++){
+        for(i=0; i< MAX_SENSORS; i++){
             if( VL53L0XDevs[i].Present ){
                 PresentMsg[i+1]=VL53L0XDevs[i].DevLetter;
             }
@@ -381,7 +385,7 @@ void SetupSingleShot(RangingConfig_e rangingConfig){
 	uint8_t preRangeVcselPeriod = 14;
 	uint8_t finalRangeVcselPeriod = 10;
 
-    for( i=0; i<4; i++){
+    for( i=0; i<MAX_SENSORS; i++){
         if( VL53L0XDevs[i].Present){
             status=VL53L0X_StaticInit(&VL53L0XDevs[i]);
             if( status ){
@@ -529,7 +533,7 @@ int RangeDemo(int UseSensorsMask, RangingConfig_e rangingConfig){
     SetupSingleShot(rangingConfig);
 
     /* Which sensor to use ? */
-    for(i=0, nSensorToUse=0; i<4; i++){
+    for(i=0, nSensorToUse=0; i<MAX_SENSORS; i++){
         if(( UseSensorsMask& (1<<i) ) && VL53L0XDevs[i].Present ){
             nSensorToUse++;
             if( nSensorToUse==1 )
@@ -545,7 +549,7 @@ int RangeDemo(int UseSensorsMask, RangingConfig_e rangingConfig){
         if( nSensorToUse >1 ){
         	/* Multiple devices */
             strcpy(StrDisplay, "    ");
-            for( i=0; i<4; i++){
+            for( i=0; i<MAX_SENSORS; i++){
                 trace_printf("A%d,%d,%d\n", VL53L0XDevs[i].Id, VL53L0XDevs[i].Present, UseSensorsMask );
 
                 if( ! VL53L0XDevs[i].Present  || (UseSensorsMask & (1<<i))==0 )
@@ -727,9 +731,9 @@ void ResetAndDetectSensor(int SetDisplay){
     int nSensor;
     nSensor = DetectSensors(SetDisplay);
     /* at least one sensor and if one it must be the built-in one  */
-    if( (nSensor <=0) ||  (nSensor ==1 && VL53L0XDevs[1].Present==0) ){
-        HandleError(ERR_DETECT);
-    }
+//    if( (nSensor <=0) ||  (nSensor ==1 && VL53L0XDevs[1].Present==0) ){
+//        HandleError(ERR_DETECT);
+//    }
 }
 
 /* USER CODE END 0 */
@@ -741,7 +745,7 @@ int sensorInit(void)
   int ExitWithLongPress;
   RangingConfig_e RangingConfig = LONG_RANGE;
   DemoMode_e DemoMode = RANGE_VALUE;
-  int UseSensorsMask = 1<<XNUCLEO53L0A1_DEV_CENTER;
+  int UseSensorsMask = 1<<XNUCLEO53L0A1_DEV_USER;
   /* USER CODE END 1 */
   /* Initialize all configured peripherals */
   /* Initialize timestamping for UART logging */
@@ -750,13 +754,13 @@ int sensorInit(void)
   /* USER CODE BEGIN 2 */
   XNUCLEO53L0A1_Init();
   uart_printf(WelcomeMsg);
-  XNUCLEO53L0A1_SetDisplayString("53L0");
+//  XNUCLEO53L0A1_SetDisplayString("53L0");
   HAL_Delay(WelcomeTime);
   ResetAndDetectSensor(1);
 
   /* Set VL53L0X API trace level */
-  VL53L0X_trace_config(NULL, TRACE_MODULE_NONE, TRACE_LEVEL_NONE, TRACE_FUNCTION_NONE); // No Trace
-  //VL53L0X_trace_config(NULL,TRACE_MODULE_ALL, TRACE_LEVEL_ALL, TRACE_FUNCTION_ALL); // Full trace
+  //VL53L0X_trace_config(NULL, TRACE_MODULE_NONE, TRACE_LEVEL_NONE, TRACE_FUNCTION_NONE); // No Trace
+  VL53L0X_trace_config(NULL,TRACE_MODULE_ALL, TRACE_LEVEL_ALL, TRACE_FUNCTION_ALL); // Full trace
 
 
   /* USER CODE END 2 */
@@ -767,12 +771,12 @@ int sensorInit(void)
   {
   /* USER CODE END WHILE */
       /* Display demo mode */
-      XNUCLEO53L0A1_SetDisplayString(DemoModeTxt[DemoMode]);
-      HAL_Delay(ModeChangeDispTime);
+//      XNUCLEO53L0A1_SetDisplayString(DemoModeTxt[DemoMode]);
+//      HAL_Delay(ModeChangeDispTime);
 
       /* Display Ranging config */
-	  XNUCLEO53L0A1_SetDisplayString(RangingConfigTxt[RangingConfig]);
-	  HAL_Delay(ModeChangeDispTime);
+//	  XNUCLEO53L0A1_SetDisplayString(RangingConfigTxt[RangingConfig]);
+//	  HAL_Delay(ModeChangeDispTime);
 
 	  /* Reset and Detect all sensors */
       ResetAndDetectSensor(0);

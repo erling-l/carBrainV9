@@ -479,6 +479,50 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
 //        debug_printf("#%d Read id fail\n", i);
         XNUCLEO53L0A1_PutI2cBus();
         break;
+    case 's' :
+    case XNUCLEO53L0A1_DEV_USER1 :
+    	/* reset Dist_01_Pin */
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+        if( state )
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
+        break;
+    case 't' :
+    case XNUCLEO53L0A1_DEV_USER2 :
+    	/* reset Dist_01_Pin */
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+        if( state )
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
+        break;
+    case 'v' :
+    case XNUCLEO53L0A1_DEV_USER3 :
+    	/* reset Dist_01_Pin */
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+        if( state )
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
+        break;
+    case 'p' :
+    case XNUCLEO53L0A1_DEV_USER4 :
+    	/* reset Dist_01_Pin */
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+        if( state )
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
+        break;
     default:
         XNUCLEO53L0A1_ErrLog("Invalid DevNo %d",DevNo);
         status = -1;

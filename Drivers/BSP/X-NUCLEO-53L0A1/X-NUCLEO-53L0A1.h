@@ -317,7 +317,11 @@ enum XNUCLEO53L0A1_dev_e{
     XNUCLEO53L0A1_DEV_LEFT =  0,    //!< left satellite device P21 header : 'l'
     XNUCLEO53L0A1_DEV_CENTER  =  1, //!< center (built-in) vl053 device : 'c"
     XNUCLEO53L0A1_DEV_RIGHT=  2,     //!< Right satellite device P22 header : 'r'
-    XNUCLEO53L0A1_DEV_USER=  3     //!< User device P22 header : 'u'
+    XNUCLEO53L0A1_DEV_USER=  3,     //!< User device P22 header : 'u'
+    XNUCLEO53L0A1_DEV_USER1=  4,     //!< User device P22 header : 'u'
+    XNUCLEO53L0A1_DEV_USER2=  5,     //!< User device P22 header : 'u'
+    XNUCLEO53L0A1_DEV_USER3=  6,     //!< User device P22 header : 'u'
+    XNUCLEO53L0A1_DEV_USER4=  7     //!< User device P22 header : 'u'
 };
 
 /**

@@ -725,6 +725,7 @@ void StartPidTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
+
     osDelay(1);
   }
   /* USER CODE END StartPidTask */
