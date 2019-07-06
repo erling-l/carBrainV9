@@ -722,11 +722,17 @@ void StartDriverTask(void *argument)
 void StartPidTask(void *argument)
 {
   /* USER CODE BEGIN StartPidTask */
+	uint8_t i = 0;
+	uint8_t status = 0;
   /* Infinite loop */
   for(;;)
   {
-
-    osDelay(1);
+//	  status = ReadOneSensorRange(3);
+	  i = i+1;
+	  if (i >= MAX_SENSORS ){
+		  i = 0;
+	  }
+    osDelay(300);
   }
   /* USER CODE END StartPidTask */
 }

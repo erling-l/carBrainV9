@@ -42,7 +42,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+extern int MAX_SENSORS;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -56,7 +56,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+extern uint8_t ReadOneSensorRange(uint8_t sensorNo);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
