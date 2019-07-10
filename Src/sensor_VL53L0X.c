@@ -102,7 +102,7 @@
 I2C_HandleTypeDef  XNUCLEO53L0A1_hi2c;
 
 /* Private variables ---------------------------------------------------------*/
-const int MAX_SENSORS = 4;
+const int MAX_SENSORS = 8;
 const char TxtRangeValue[]  = "rng";
 const char TxtBarGraph[]    = "bar";
 #if HAVE_ALARM_DEMO
