@@ -49,6 +49,7 @@
 #include "X-NUCLEO-53L0A1.h"
 #include "vl53l0x_api.h"
 #include <limits.h>
+#include "vl53l0x_platform.h"
 
 /**
  * @defgroup Configuration Static configuration
@@ -190,7 +191,7 @@ void ResetAndDetectSensor(int SetDisplay);
 
 
 #define debug_printf    trace_printf
-char WelcomeMsg[]="Hi I am Ranging VL53L0X mcu " MCU_NAME "\n";
+char WelcomeMsg[]="Hi I am Ranging VL53L0X mcu " MCU_NAME "\n\r";
 
 #if HAVE_ALARM_DEMO
 volatile int IntrCount;
@@ -278,8 +279,9 @@ int DetectSensors(int SetDisplay) {
 	for (i = 0; i < MAX_SENSORS; i++) {
 		status = XNUCLEO53L0A1_ResetId(i, 0);
 		debug_printf("#%d Read id fail %d\n ", i,status);
-		int tmp = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14);
-		debug_printf("#%d Read this is a failed id fail %d  %d\n", i,status, tmp);
+//		int tmp = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15);
+//		debug_printf("#%d Read this is a failed id fail %d  %d\n\r", i,status, tmp);
+		debug_printf("#%d Read this is a failed id fail %d  %d\n\r", i,status);
 	}
 	/* detect all sensors (even on-board)*/
 	for (i = 0; i < MAX_SENSORS; i++) {
@@ -299,22 +301,23 @@ int DetectSensors(int SetDisplay) {
 			/* Try to read one register using default 0x52 address */
 			status = VL53L0X_RdWord(pDev, VL53L0X_REG_IDENTIFICATION_MODEL_ID, &Id);
 			if (status) {
-				int tmp = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14);
-				debug_printf("#%d Read this is a failed id fail %d  %d\n", i,status, tmp);
+//				int tmp = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15);
+//				debug_printf("#%d Read this is a failed id fail %d  %d\n\r", i,status, tmp);
+				debug_printf("#%d Read this is a failed id fail %d  %d\n\r", i,status);
 				break;
 			}
 			if (Id == 0xEEAA) {
 				/* Sensor is found => Change its I2C address to final one */
 				status = VL53L0X_SetDeviceAddress(pDev,FinalAddress);
 				if (status != 0) {
-					debug_printf("#i VL53L0X_SetDeviceAddress fail\n", i);
+					debug_printf("#i VL53L0X_SetDeviceAddress fail\n\r", i);
 					break;
 				}
 				pDev->I2cDevAddr = FinalAddress;
 				/* Check all is OK with the new I2C address and initialize the sensor */
 				status = VL53L0X_RdWord(pDev, VL53L0X_REG_IDENTIFICATION_MODEL_ID, &Id);
 				if (status != 0) {
-					debug_printf("#i VL53L0X_RdWord fail\n", i);
+					debug_printf("#i VL53L0X_RdWord fail\n\r", i);
 					break;
 				}
 
@@ -323,16 +326,16 @@ int DetectSensors(int SetDisplay) {
 					pDev->Present = 1;
 				}
 				else{
-					debug_printf("VL53L0X_DataInit %d fail\n", i);
+					debug_printf("VL53L0X_DataInit %d fail\n\r", i);
 					break;
 				}
-				trace_printf("VL53L0X %d Present and initiated to final 0x%x\n", pDev->Id, pDev->I2cDevAddr);
+				trace_printf("VL53L0X %d Present and initiated to final 0x%x\n\r", pDev->Id, pDev->I2cDevAddr);
 				nDevPresent++;
 				nDevMask |= 1 << i;
 				pDev->Present = 1;
 			}
 			else {
-				debug_printf("#%d unknown ID %x\n", i, Id);
+				debug_printf("#%d unknown ID %x\n\r", i, Id);
 				status = 1;
 			}
 		} while (0);
@@ -376,32 +379,32 @@ void SetUpSingleShotOneSensor(uint8_t sensorNo, RangingConfig_e rangingConfig) {
 	if( VL53L0XDevs[sensorNo].Present){
 		status=VL53L0X_StaticInit(&VL53L0XDevs[sensorNo]);
 		if( status ){
-			debug_printf("VL53L0X_StaticInit %d failed\n",sensorNo);
+			debug_printf("VL53L0X_StaticInit %d failed\n\r",sensorNo);
 		}
 
 		status = VL53L0X_PerformRefCalibration(&VL53L0XDevs[sensorNo], &VhvSettings, &PhaseCal);
 		if( status ){
-			debug_printf("VL53L0X_PerformRefCalibration failed\n");
+			debug_printf("VL53L0X_PerformRefCalibration failed\n\r");
 		}
 
 		status = VL53L0X_PerformRefSpadManagement(&VL53L0XDevs[sensorNo], &refSpadCount, &isApertureSpads);
 		if( status ){
-			debug_printf("VL53L0X_PerformRefSpadManagement failed\n");
+			debug_printf("VL53L0X_PerformRefSpadManagement failed\n\r");
 		}
 
 		status = VL53L0X_SetDeviceMode(&VL53L0XDevs[sensorNo], VL53L0X_DEVICEMODE_SINGLE_RANGING); // Setup in single ranging mode
 		if( status ){
-			debug_printf("VL53L0X_SetDeviceMode failed\n");
+			debug_printf("VL53L0X_SetDeviceMode failed\n\r");
 		}
 
 		status = VL53L0X_SetLimitCheckEnable(&VL53L0XDevs[sensorNo], VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, 1); // Enable Sigma limit
 		if( status ){
-			debug_printf("VL53L0X_SetLimitCheckEnable failed\n");
+			debug_printf("VL53L0X_SetLimitCheckEnable failed\n\r");
 		}
 
 		status = VL53L0X_SetLimitCheckEnable(&VL53L0XDevs[sensorNo], VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, 1); // Enable Signa limit
 		if( status ){
-			debug_printf("VL53L0X_SetLimitCheckEnable failed\n");
+			debug_printf("VL53L0X_SetLimitCheckEnable failed\n\r");
 		}
 		/* Ranging configuration */
 		switch(rangingConfig) {
@@ -432,32 +435,32 @@ void SetUpSingleShotOneSensor(uint8_t sensorNo, RangingConfig_e rangingConfig) {
 
 		status = VL53L0X_SetLimitCheckValue(&VL53L0XDevs[sensorNo],  VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, signalLimit);
 		if( status ){
-			debug_printf("VL53L0X_SetLimitCheckValue Signal rate failed\n");
+			debug_printf("VL53L0X_SetLimitCheckValue Signal rate failed\n\r");
 		}
 
 		status = VL53L0X_SetLimitCheckValue(&VL53L0XDevs[sensorNo],  VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, sigmaLimit);
 		if( status ){
-			debug_printf("VL53L0X_SetLimitCheckValue Sigma failed\n");
+			debug_printf("VL53L0X_SetLimitCheckValue Sigma failed\n\r");
 		}
 
 		status = VL53L0X_SetMeasurementTimingBudgetMicroSeconds(&VL53L0XDevs[sensorNo],  timingBudget);
 		if( status ){
-			debug_printf("VL53L0X_SetMeasurementTimingBudgetMicroSeconds failed\n");
+			debug_printf("VL53L0X_SetMeasurementTimingBudgetMicroSeconds failed\n\r");
 		}
 
 		status = VL53L0X_SetVcselPulsePeriod(&VL53L0XDevs[sensorNo],  VL53L0X_VCSEL_PERIOD_PRE_RANGE, preRangeVcselPeriod);
 		if( status ){
-			debug_printf("VL53L0X_SetVcselPulsePeriod failed\n");
+			debug_printf("VL53L0X_SetVcselPulsePeriod failed\n\r");
 		}
 
 		status = VL53L0X_SetVcselPulsePeriod(&VL53L0XDevs[sensorNo],  VL53L0X_VCSEL_PERIOD_FINAL_RANGE, finalRangeVcselPeriod);
 		if( status ){
-			debug_printf("VL53L0X_SetVcselPulsePeriod failed\n");
+			debug_printf("VL53L0X_SetVcselPulsePeriod failed\n\r");
 		}
 
 		status = VL53L0X_PerformRefCalibration(&VL53L0XDevs[sensorNo], &VhvSettings, &PhaseCal);
 		if( status ){
-			debug_printf("VL53L0X_PerformRefCalibration failed\n");
+			debug_printf("VL53L0X_PerformRefCalibration failed\n\r");
 		}
 
 		VL53L0XDevs[sensorNo].LeakyFirst=1;

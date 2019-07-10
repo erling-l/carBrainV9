@@ -9,6 +9,7 @@
 #include  "X-NUCLEO-53L0A1.h"
 
 #include "stm32xxx_hal.h"
+#include "vl53l0x_platform.h"
 
 #ifndef HAL_I2C_MODULE_ENABLED
 #define HAL_I2C_MODULE_ENABLED
@@ -28,7 +29,7 @@
  */
 #   define XNUCLEO53L0A1_PutI2cBus(...) (void)0
 #endif
-
+extern VL53L0X_Dev_t VL53L0XDevs[];
 /**
  *@mainpage
  *@image html VL53L0A1_board.jpg "X-NUCLEO-53L0A1 Expansion Board"
@@ -427,49 +428,72 @@ done_err:
 }
 
 
-int XNUCLEO53L0A1_GetPB1(int *state) {
-    int status;
-    uint8_t  PortValue;
-    status= _ExpanderRd(I2cExpAddr1, GPMR+1, &PortValue,1);
-    if( status == 0){
-        if( PortValue&=0x40 )
-            PortValue=1;
-        else
-            PortValue=0;
-    }
-    else{
-        XNUCLEO53L0A1_ErrLog("i/o error");
-    }
-    *state = PortValue;
-    return status;
-}
+//int XNUCLEO53L0A1_GetPB1(int *state) {
+//    int status;
+//    uint8_t  PortValue;
+//    status= _ExpanderRd(I2cExpAddr1, GPMR+1, &PortValue,1);
+//    if( status == 0){
+//        if( PortValue&=0x40 )
+//            PortValue=1;
+//        else
+//            PortValue=0;
+//    }
+//    else{
+//        XNUCLEO53L0A1_ErrLog("i/o error");
+//    }
+//    *state = PortValue;
+//    return status;
+//}
 
 int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
     int status;
+	VL53L0X_Dev_t *pDev;
+	pDev = &VL53L0XDevs[DevNo];
+
     switch( DevNo ){
     case XNUCLEO53L0A1_DEV_CENTER :
     case 'c' :
-        CurIOVal.bytes[3]&=~0x80; /* bit 15 expender 1  => byte #3 */
+		pDev->ResetPort = 'B';
+		pDev->ResetPin = GPIO_PIN_15;
+    	/* reset Dist_01_Pin */
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
         if( state )
-            CurIOVal.bytes[3]|=0x80; /* bit 15 expender 1  => byte #3 */
-        status= _ExpanderWR(I2cExpAddr1, GPSR+1, &CurIOVal.bytes[3], 1);
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
         break;
     case XNUCLEO53L0A1_DEV_LEFT :
     case 'l' :
-        CurIOVal.bytes[1]&=~0x40; /* bit 14 expender 0 => byte #1*/
+		pDev->ResetPort = 'B';
+		pDev->ResetPin = GPIO_PIN_1;
+    	/* reset Dist_01_Pin */
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
         if( state )
-            CurIOVal.bytes[1]|=0x40; /* bit 14 expender 0 => byte #1*/
-        status= _ExpanderWR(I2cExpAddr0, GPSR+1, &CurIOVal.bytes[1], 1);
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
         break;
     case 'r' :
     case XNUCLEO53L0A1_DEV_RIGHT :
-        CurIOVal.bytes[1]&=~0x80; /* bit 15 expender 0  => byte #1 */
+		pDev->ResetPort = 'B';
+		pDev->ResetPin = GPIO_PIN_0;
+    	/* reset Dist_01_Pin */
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
         if( state )
-            CurIOVal.bytes[1]|=0x80; /* bit 15 expender 0 => byte #1*/
-        status= _ExpanderWR(I2cExpAddr0, GPSR+1, &CurIOVal.bytes[1], 1);
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
         break;
     case 'u' :
     case XNUCLEO53L0A1_DEV_USER :
+		pDev->ResetPort = 'B';
+		pDev->ResetPin = GPIO_PIN_14;
     	/* reset Dist_01_Pin */
     	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
         if( state )
@@ -481,10 +505,12 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
         break;
     case 's' :
     case XNUCLEO53L0A1_DEV_USER1 :
+		pDev->ResetPort = 'B';
+		pDev->ResetPin = GPIO_PIN_2;
     	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
         if( state )
-      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
         XNUCLEO53L0A1_GetI2cBus();
         status = 0;
 //        debug_printf("#%d Read id fail\n", i);
@@ -492,10 +518,12 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
         break;
     case 't' :
     case XNUCLEO53L0A1_DEV_USER2 :
+		pDev->ResetPort = 'B';
+		pDev->ResetPin = GPIO_PIN_10;
     	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
         if( state )
-      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
         XNUCLEO53L0A1_GetI2cBus();
         status = 0;
 //        debug_printf("#%d Read id fail\n", i);
@@ -503,10 +531,12 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
         break;
     case 'v' :
     case XNUCLEO53L0A1_DEV_USER3 :
+		pDev->ResetPort = 'C';
+		pDev->ResetPin = GPIO_PIN_8;
     	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
         if( state )
-      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+      	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
         XNUCLEO53L0A1_GetI2cBus();
         status = 0;
 //        debug_printf("#%d Read id fail\n", i);
@@ -514,10 +544,12 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
         break;
     case 'p' :
     case XNUCLEO53L0A1_DEV_USER4 :
+		pDev->ResetPort = 'C';
+		pDev->ResetPin = GPIO_PIN_9;
     	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
         if( state )
-      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+      	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
         XNUCLEO53L0A1_GetI2cBus();
         status = 0;
 //        debug_printf("#%d Read id fail\n", i);
@@ -530,7 +562,7 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
     }
 //error with valid id
     if( status ){
-        XNUCLEO53L0A1_ErrLog("expander i/o error for DevNo %d state %d ",DevNo, state);
+        XNUCLEO53L0A1_ErrLog("???????????????expander i/o error for DevNo %d state %d ",DevNo, state);
     }
 done:
     return status;
