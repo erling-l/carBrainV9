@@ -455,27 +455,19 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
     case 'c' :
 		pDev->ResetPort = 'B';
 		pDev->ResetPin = GPIO_PIN_15;
-    	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
-        if( state )
-      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-        XNUCLEO53L0A1_GetI2cBus();
-        status = 0;
-//        debug_printf("#%d Read id fail\n", i);
-        XNUCLEO53L0A1_PutI2cBus();
+        CurIOVal.bytes[3]&=~0x80; /* bit 15 expender 1  => byte #3 */
+		         if( state )
+            CurIOVal.bytes[3]|=0x80; /* bit 15 expender 1  => byte #3 */
+        status= _ExpanderWR(I2cExpAddr1, GPSR+1, &CurIOVal.bytes[3], 1);
         break;
     case XNUCLEO53L0A1_DEV_LEFT :
     case 'l' :
 		pDev->ResetPort = 'B';
 		pDev->ResetPin = GPIO_PIN_1;
-    	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
-        if( state )
-      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
-        XNUCLEO53L0A1_GetI2cBus();
-        status = 0;
-//        debug_printf("#%d Read id fail\n", i);
-        XNUCLEO53L0A1_PutI2cBus();
+        CurIOVal.bytes[1]&=~0x40; /* bit 14 expender 0 => byte #1*/
+		         if( state )
+            CurIOVal.bytes[1]|=0x40; /* bit 14 expender 0 => byte #1*/
+        status= _ExpanderWR(I2cExpAddr0, GPSR+1, &CurIOVal.bytes[1], 1);
         break;
     case 'r' :
     case XNUCLEO53L0A1_DEV_RIGHT :
