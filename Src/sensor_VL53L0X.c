@@ -283,13 +283,13 @@ int DetectSensors(int SetDisplay) {
 //		debug_printf("#%d Read this is a failed id fail %d  %d\n\r", i,status, tmp);
 		debug_printf("#%d Read this is a failed id fail %d  %d\n\r", i,status);
 	}
-	/* detect all sensors (even on-board)*/
+	/* detect all sensors */
 	for (i = 0; i < MAX_SENSORS; i++) {
 		VL53L0X_Dev_t *pDev;
 		pDev = &VL53L0XDevs[i];
 		pDev->I2cDevAddr = 0x52;
 		pDev->Present = 0;
-		status = XNUCLEO53L0A1_ResetId( pDev->Id, 1);
+		status = XNUCLEO53L0A1_ResetId( pDev->Id, 1);  // enable sensor
 		HAL_Delay(2);
 		FinalAddress=0x52+(i+1)*2;
 
@@ -324,11 +324,13 @@ int DetectSensors(int SetDisplay) {
 				status = VL53L0X_DataInit(pDev);
 				if( status == 0 ){
 					pDev->Present = 1;
+					// here
 				}
 				else{
 					debug_printf("VL53L0X_DataInit %d fail\n\r", i);
 					break;
 				}
+				// todo move code to previous Present =1
 				trace_printf("VL53L0X %d Present and initiated to final 0x%x\n\r", pDev->Id, pDev->I2cDevAddr);
 				nDevPresent++;
 				nDevMask |= 1 << i;
@@ -345,16 +347,16 @@ int DetectSensors(int SetDisplay) {
 		}
 	}
 	/* Display detected sensor(s) */
-	if( SetDisplay ){
-		for(i=0; i< MAX_SENSORS; i++){
-			if( VL53L0XDevs[i].Present ){
-				PresentMsg[i+1]=VL53L0XDevs[i].DevLetter;
-			}
-		}
-		PresentMsg[0]=' ';
-		XNUCLEO53L0A1_SetDisplayString(PresentMsg);
-		HAL_Delay(1000);
-	}
+//	if( SetDisplay ){
+//		for(i=0; i< MAX_SENSORS; i++){
+//			if( VL53L0XDevs[i].Present ){
+//				PresentMsg[i+1]=VL53L0XDevs[i].DevLetter;
+//			}
+//		}
+//		PresentMsg[0]=' ';
+//		XNUCLEO53L0A1_SetDisplayString(PresentMsg);
+//		HAL_Delay(1000);
+//	}
 
 	return nDevPresent;
 }
@@ -760,7 +762,7 @@ int sensorInit(void)
 	uart_printf(WelcomeMsg);
 	//  XNUCLEO53L0A1_SetDisplayString("53L0");
 	HAL_Delay(WelcomeTime);
-	ResetAndDetectSensor(1);
+	DetectSensors(1);
 
 	/* Set VL53L0X API trace level */
 	//VL53L0X_trace_config(NULL, TRACE_MODULE_NONE, TRACE_LEVEL_NONE, TRACE_FUNCTION_NONE); // No Trace
@@ -778,6 +780,7 @@ int sensorInit(void)
 		//	  HAL_Delay(ModeChangeDispTime);
 
 		/* Reset and Detect all sensors */
+		// todo if state or mode change maybeneeded
 		ResetAndDetectSensor(0);
 
 		/* Reset Timestamping */

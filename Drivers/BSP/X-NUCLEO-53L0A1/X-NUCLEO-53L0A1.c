@@ -384,6 +384,7 @@ done:
 
 int XNUCLEO53L0A1_Init(void) {
     int status;
+//    todo remove duplicate usart init and expander remove
     uint8_t ExpanderData[2];
     XNUCLEO53L0A1_USART2_UART_Init();
     XNUCLEO53L0A1_I2C1Configure();
