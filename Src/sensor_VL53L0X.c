@@ -332,7 +332,7 @@ int DetectSensors(int SetDisplay) {
 				}
 				// todo move code to previous Present =1
 				trace_printf("VL53L0X %d Present and initiated to final 0x%x\n\r", pDev->Id, pDev->I2cDevAddr);
-				nDevPresent++;
+				nDevPresent = nDevPresent + 1;
 				nDevMask |= 1 << i;
 				pDev->Present = 1;
 			}
@@ -552,7 +552,8 @@ int RangeDemo(int UseSensorsMask, RangingConfig_e rangingConfig){
 
 	/* Which sensor to use ? */
 	for(i=0, nSensorToUse=0; i<MAX_SENSORS; i++){
-		if(( UseSensorsMask& (1<<i) ) && VL53L0XDevs[i].Present ){
+		if( VL53L0XDevs[i].Present ){
+//			if(( UseSensorsMask& (1<<i) ) && VL53L0XDevs[i].Present ){
 			nSensorToUse++;
 			if( nSensorToUse==1 )
 				SingleSensorNo=i;
@@ -568,9 +569,9 @@ int RangeDemo(int UseSensorsMask, RangingConfig_e rangingConfig){
 			/* Multiple devices */
 			//            strcpy(StrDisplay, "    ");
 			for( i=0; i<MAX_SENSORS; i++){
-				trace_printf("A%d,%d,%d\n\r", VL53L0XDevs[i].Id, VL53L0XDevs[i].Present, UseSensorsMask );
+//				trace_printf("A%d,%d,%d\n\r", VL53L0XDevs[i].Id, VL53L0XDevs[i].Present, UseSensorsMask );
 
-				if( ! VL53L0XDevs[i].Present  || (UseSensorsMask & (1<<i))==0 )
+				if( ! VL53L0XDevs[i].Present)
 					continue;
 				status = ReadOneSensorRange(i);
 			}
@@ -582,7 +583,7 @@ int RangeDemo(int UseSensorsMask, RangingConfig_e rangingConfig){
 			status = VL53L0X_PerformSingleRangingMeasurement(&VL53L0XDevs[SingleSensorNo],&RangingMeasurementData);
 			if( status ==0 ){
 				/* Push data logging to UART */
-				trace_printf("%d,%u,%d,%d,%d\n\r", VL53L0XDevs[SingleSensorNo].Id, TimeStamp_Get(), RangingMeasurementData.RangeStatus, RangingMeasurementData.RangeMilliMeter, RangingMeasurementData.SignalRateRtnMegaCps);
+				trace_printf("D %d,%u,%d,%d,%d\n\r", VL53L0XDevs[SingleSensorNo].Id, TimeStamp_Get(), RangingMeasurementData.RangeStatus, RangingMeasurementData.RangeMilliMeter, RangingMeasurementData.SignalRateRtnMegaCps);
 				Sensor_SetNewRange(&VL53L0XDevs[SingleSensorNo],&RangingMeasurementData);
 				/* Display distance in cm */
 				if( RangingMeasurementData.RangeStatus == 0 ){
