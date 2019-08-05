@@ -63,18 +63,26 @@ extern uint8_t ReadOneSensorRange(uint8_t sensorNo);
 /* Private defines -----------------------------------------------------------*/
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
+#define Dist_01_int_Pin GPIO_PIN_0
+#define Dist_01_int_GPIO_Port GPIOC
+#define Dist_02_int_Pin GPIO_PIN_1
+#define Dist_02_int_GPIO_Port GPIOC
+#define Dist_03_Pin GPIO_PIN_0
+#define Dist_03_GPIO_Port GPIOA
+#define Dist_04_int_Pin GPIO_PIN_1
+#define Dist_04_int_GPIO_Port GPIOA
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
-#define Dist_07_Pin GPIO_PIN_4
-#define Dist_07_GPIO_Port GPIOC
-#define Dist_08_Pin GPIO_PIN_5
-#define Dist_08_GPIO_Port GPIOC
-#define Dist_03_Pin GPIO_PIN_0
-#define Dist_03_GPIO_Port GPIOB
+#define Dist_05_int_Pin GPIO_PIN_4
+#define Dist_05_int_GPIO_Port GPIOC
+#define Dist_06_int_Pin GPIO_PIN_5
+#define Dist_06_int_GPIO_Port GPIOC
+#define Dist_03_int_Pin GPIO_PIN_0
+#define Dist_03_int_GPIO_Port GPIOB
 #define Dist_04_Pin GPIO_PIN_1
 #define Dist_04_GPIO_Port GPIOB
 #define Dist_05_Pin GPIO_PIN_2
@@ -85,12 +93,20 @@ extern uint8_t ReadOneSensorRange(uint8_t sensorNo);
 #define Dist_01_GPIO_Port GPIOB
 #define Dist_02_Pin GPIO_PIN_15
 #define Dist_02_GPIO_Port GPIOB
+#define Dist_07_Pin GPIO_PIN_8
+#define Dist_07_GPIO_Port GPIOC
+#define Dist_08_Pin GPIO_PIN_9
+#define Dist_08_GPIO_Port GPIOC
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
+#define Dist_08_int_Pin GPIO_PIN_6
+#define Dist_08_int_GPIO_Port GPIOB
+#define Dist_07_int_Pin GPIO_PIN_7
+#define Dist_07_int_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

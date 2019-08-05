@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Users/erling150/git/carBrainV9/Inc
+HeaderPath=D:/mySwInGit/carBrainV9/Inc
 HeaderFiles=FreeRTOSConfig.h;stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;
-SourcePath=C:/Users/erling150/git/carBrainV9/Src
+SourcePath=D:/mySwInGit/carBrainV9/Src
 SourceFiles=freertos.c;stm32f4xx_it.c;stm32f4xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]

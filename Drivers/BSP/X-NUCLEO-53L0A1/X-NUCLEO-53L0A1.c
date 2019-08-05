@@ -10,6 +10,7 @@
 
 #include "stm32xxx_hal.h"
 #include "vl53l0x_platform.h"
+//#include "main.h"
 
 #ifndef HAL_I2C_MODULE_ENABLED
 #define HAL_I2C_MODULE_ENABLED
@@ -452,47 +453,8 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
 	pDev = &VL53L0XDevs[DevNo];
 
     switch( DevNo ){
-    case XNUCLEO53L0A1_DEV_CENTER :
-    case 'c' :
-		pDev->ResetPort = 'B';
-		pDev->ResetPin = GPIO_PIN_15;
-    	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
-        if( state )
-      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-        XNUCLEO53L0A1_GetI2cBus();
-        status = 0;
-//        debug_printf("#%d Read id fail\n", i);
-        XNUCLEO53L0A1_PutI2cBus();
-        break;
-    case XNUCLEO53L0A1_DEV_LEFT :
-    case 'l' :
-		pDev->ResetPort = 'B';
-		pDev->ResetPin = GPIO_PIN_1;
-    	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
-        if( state )
-      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
-        XNUCLEO53L0A1_GetI2cBus();
-        status = 0;
-//        debug_printf("#%d Read id fail\n", i);
-        XNUCLEO53L0A1_PutI2cBus();
-        break;
-    case 'r' :
-    case XNUCLEO53L0A1_DEV_RIGHT :
-		pDev->ResetPort = 'B';
-		pDev->ResetPin = GPIO_PIN_0;
-    	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-        if( state )
-      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
-        XNUCLEO53L0A1_GetI2cBus();
-        status = 0;
-//        debug_printf("#%d Read id fail\n", i);
-        XNUCLEO53L0A1_PutI2cBus();
-        break;
     case 'u' :
-    case XNUCLEO53L0A1_DEV_USER :
+    case XNUCLEO53L0A1_DEV_USER :   // Dist_01 (0)
 		pDev->ResetPort = 'B';
 		pDev->ResetPin = GPIO_PIN_14;
     	/* reset Dist_01_Pin */
@@ -504,11 +466,50 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
 //        debug_printf("#%d Read id fail\n", i);
         XNUCLEO53L0A1_PutI2cBus();
         break;
+    case XNUCLEO53L0A1_DEV_CENTER :  // Dist_02 (1)
+    case 'c' :
+		pDev->ResetPort = 'B';
+		pDev->ResetPin = GPIO_PIN_15;
+    	/* reset Dist_02_Pin */
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+        if( state )
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
+        break;
+    case 'r' :
+    case XNUCLEO53L0A1_DEV_RIGHT :  // Dist_03 (2)
+		pDev->ResetPort = 'B';
+		pDev->ResetPin = GPIO_PIN_0;
+    	/* reset Dist_03_Pin */
+    	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+        if( state )
+      	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
+        break;
+    case XNUCLEO53L0A1_DEV_LEFT : // Dist_04 (3)
+    case 'l' :
+		pDev->ResetPort = 'B';
+		pDev->ResetPin = GPIO_PIN_1;
+    	/* reset Dist_04_Pin */
+    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+        if( state )
+      	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+        XNUCLEO53L0A1_GetI2cBus();
+        status = 0;
+//        debug_printf("#%d Read id fail\n", i);
+        XNUCLEO53L0A1_PutI2cBus();
+        break;
     case 's' :
-    case XNUCLEO53L0A1_DEV_USER1 :
+    case XNUCLEO53L0A1_DEV_USER1 : // Dist_05
 		pDev->ResetPort = 'B';
 		pDev->ResetPin = GPIO_PIN_2;
-    	/* reset Dist_01_Pin */
+    	/* reset Dist_05_Pin */
     	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
         if( state )
       	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
@@ -518,10 +519,10 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
         XNUCLEO53L0A1_PutI2cBus();
         break;
     case 't' :
-    case XNUCLEO53L0A1_DEV_USER2 :
+    case XNUCLEO53L0A1_DEV_USER2 :  // Dist_06
 		pDev->ResetPort = 'B';
 		pDev->ResetPin = GPIO_PIN_10;
-    	/* reset Dist_01_Pin */
+    	/* reset Dist_06_Pin */
     	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
         if( state )
       	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
@@ -530,27 +531,27 @@ int XNUCLEO53L0A1_ResetId(int DevNo, int state) {
 //        debug_printf("#%d Read id fail\n", i);
         XNUCLEO53L0A1_PutI2cBus();
         break;
-    case 'v' :
-    case XNUCLEO53L0A1_DEV_USER3 :
+    case 'p' :
+    case XNUCLEO53L0A1_DEV_USER4 : // Dist_07
 		pDev->ResetPort = 'C';
-		pDev->ResetPin = GPIO_PIN_8;
-    	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
+		pDev->ResetPin = GPIO_PIN_9;
+    	/* reset Dist_07_Pin */
+    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
         if( state )
-      	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
+      	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
         XNUCLEO53L0A1_GetI2cBus();
         status = 0;
 //        debug_printf("#%d Read id fail\n", i);
         XNUCLEO53L0A1_PutI2cBus();
         break;
-    case 'p' :
-    case XNUCLEO53L0A1_DEV_USER4 :
+    case 'v' :
+    case XNUCLEO53L0A1_DEV_USER3 :
 		pDev->ResetPort = 'C';
-		pDev->ResetPin = GPIO_PIN_9;
-    	/* reset Dist_01_Pin */
-    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+		pDev->ResetPin = GPIO_PIN_8;  // Dist_08
+    	/* reset Dist_08_Pin */
+    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
         if( state )
-      	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+      	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
         XNUCLEO53L0A1_GetI2cBus();
         status = 0;
 //        debug_printf("#%d Read id fail\n", i);
